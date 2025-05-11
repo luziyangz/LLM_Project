@@ -1,0 +1,8 @@
+虚拟环境创建和激活指令：
+python -m venv .venv
+ .\.venv\Scripts\activate （windows）
+
+
+
+ 
+

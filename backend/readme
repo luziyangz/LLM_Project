@@ -1,0 +1,69 @@
+python的后端框架
+fastAPI
+
+特点：
+1.高性能:基于Starlette和Pydantic，利用异步编程，具有出色的性能和可扩展性
+2.自动文档生成：自动生成交互API文档，支持SwaggerUI和ReDoc
+3.类型注解支持： 利用pythond的类型朱姐，提供更严格的输入验证和更好的代码提示
+4.异步支持： 支持异步请求处理，支持处理IO密集型任务更加高效
+
+适用场景：
+1. 构建API后端
+2. 微服务架构
+3. 数据处理API
+4. 实时通信
+
+安装
+pip install fastapi
+另外可能还需要一个ASGI服务器，生产环境可以使用uvicorn 或者hypercorn
+pip install "uvicorn[standard]"
+- uvicorn 是什么？
+
+- uvicorn 是一个轻量级的ASGI服务器实现
+- 它专门用于运行Python的异步Web应用
+- 特别适合运行FastAPI等异步框架
+- [standard] 的含义：
+
+- 这是pip的extras语法
+- standard 是一个可选的特性集合
+- 安装 uvicorn[standard] 会同时安装以下额外的依赖：
+  - websockets：用于WebSocket支持
+  - httptools：更快的HTTP解析
+  - uvloop：提供更好的事件循环性能
+  - watchgod：用于开发时的自动重载功能
+  - python-dotenv：用于环境变量管理
+  - PyYAML：用于配置文件支持
+- 为什么要安装standard版本？
+
+- 提供了更完整的功能支持
+- 性能更好（因为包含了uvloop等优化组件）
+- 开发体验更好（有自动重载等功能）
+- 生产环境建议使用，因为包含了所有推荐的优化组件
+
+
+
+启动指令
+uvicorn main:app --reload
+这是一个启动FastAPI应用的命令，让我们来分解它的各个部分：
+
+1. uvicorn ：ASGI服务器的名称，用于运行FastAPI应用
+2. main:app ：这个参数包含两部分：
+   
+   - main ：Python模块名（即main.py文件，不需要.py后缀）
+   - app ：在该模块中创建的FastAPI应用实例的变量名
+   - 中间用冒号 : 分隔
+3. --reload ：开发模式的选项
+   
+   - 启用代码热重载功能
+   - 当你修改代码时，服务器会自动重启
+   - 这个选项只建议在开发环境中使用，生产环境应该去掉
+
+
+
+交互式API文档-UI界面
+  http://127.0.0.1:8000/redoc
+  http://127.0.0.1:8000/docs
+
+
+
+
