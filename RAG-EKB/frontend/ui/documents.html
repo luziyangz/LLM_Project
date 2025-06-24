@@ -6,6 +6,8 @@
   <title>RAG Demo - 文档管理</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <!-- Vue.js -->
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
   <!-- Axios for API calls -->
@@ -36,31 +38,82 @@
         </div>
         <!-- 文档列表 -->
         <div class="document-list">
-          <ul class="list-group">
+          <div v-if="documents.length === 0" class="text-center text-muted py-4">
+            <p>暂无文档，请先上传文档</p>
+          </div>
+          <ul v-else class="list-group">
             <li v-for="doc in documents" :key="doc.id" class="list-group-item d-flex justify-content-between align-items-center">
-              {{ doc.name }}
-              <button class="btn btn-danger btn-sm" @click="deleteDocument(doc.id)">删除</button>
+              <div class="flex-grow-1">
+                <div class="document-header">
+                  <strong class="document-name">{{ doc.name }}</strong>
+                  <span :class="getStatusClass(doc.processing_status)" class="status-badge">
+                    {{ getStatusText(doc.processing_status) }}
+                  </span>
+                </div>
+                <div class="document-details">
+                  <span>大小: {{ formatFileSize(doc.size) }}</span>
+                  <span>创建时间: {{ formatDate(doc.created_at) }}</span>
+                  <span v-if="doc.processed_at">处理时间: {{ formatDate(doc.processed_at) }}</span>
+                  <span v-if="doc.chunk_count">分块数: {{ doc.chunk_count }}</span>
+                  <span v-if="doc.processing_time">耗时: {{ doc.processing_time.toFixed(2) }}秒</span>
+                </div>
+                <div v-if="doc.error_message" class="error-info">
+                  <small class="text-danger">错误: {{ doc.error_message }}</small>
+                </div>
+              </div>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary btn-sm" @click="configureProcessing(doc.id)" title="配置文档处理">
+                  ⚙️ 配置处理
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" @click="showDeleteConfirm(doc)" title="删除文档">
+                  🗑️ 删除
+                </button>
+              </div>
             </li>
           </ul>
         </div>
       </div>
     </div>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteConfirmModalLabel">确认删除</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>您确定要删除文档 <strong>{{ documentToDelete?.name }}</strong> 吗？</p>
+            <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> 此操作不可撤销！</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-danger" @click="confirmDelete">确认删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
 
   <script>
     const { createApp } = Vue;
 
-     // 全局设置 axios 的 baseURL
-     axios.defaults.baseURL = 'http://localhost:8000';
+    // 全局设置 axios 的 baseURL
+    axios.defaults.baseURL = 'http://localhost:8000';
 
     createApp({
       data() {
         return {
           documents: [], // 存储文档列表
+          documentToDelete: null, // 待删除的文档
+          deleteModal: null, // Bootstrap 模态框实例
         };
       },
       mounted() {
         this.fetchDocuments();
+        // 移除这行：this.deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
       },
       methods: {
         async fetchDocuments() {
@@ -85,21 +138,78 @@
             });
             alert('文件上传成功！');
             this.fetchDocuments();
+            // 清空文件输入框
+            event.target.value = '';
           } catch (error) {
             console.error('文件上传失败:', error);
             alert('文件上传失败！');
           }
         },
-        async deleteDocument(docId) {
+        // 显示删除确认对话框
+        showDeleteConfirm(document) {
+          this.documentToDelete = document;
+          // 使用原生确认对话框
+          if (confirm(`您确定要删除文档 "${document.name}" 吗？\n\n此操作不可撤销！`)) {
+            this.confirmDelete();
+          } else {
+            // 用户取消删除，清空待删除文档
+            this.documentToDelete = null;
+          }
+        },
+        // 确认删除文档
+        // 确认删除文档
+        async confirmDelete() {
+          if (!this.documentToDelete) return;
+          
           try {
-            await axios.delete(`api/documents/${docId}`);
+            await axios.delete(`api/documents/${this.documentToDelete.id}`);
             alert('文档删除成功！');
             this.fetchDocuments();
+            // 移除这行：this.deleteModal.hide();
+            this.documentToDelete = null;
           } catch (error) {
             console.error('删除文档失败:', error);
             alert('删除文档失败！');
           }
         },
+        // 格式化文件大小
+        formatFileSize(bytes) {
+          if (bytes === 0) return '0 Bytes';
+          const k = 1024;
+          const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        },
+        // 格式化日期
+        formatDate(dateString) {
+          const date = new Date(dateString);
+          return date.toLocaleString('zh-CN');
+        },
+        // 配置文档处理
+        configureProcessing(documentId) {
+          // 跳转到文档处理配置页面，并传递文档ID
+          window.location.href = `document_processing.html?doc=${documentId}`;
+        },
+        // 获取状态样式类
+        getStatusClass(status) {
+          const statusClasses = {
+            'uploaded': 'badge bg-secondary',
+            'processing': 'badge bg-warning',
+            'processed': 'badge bg-success',
+            'failed': 'badge bg-danger'
+          };
+          return statusClasses[status] || 'badge bg-secondary';
+        },
+        // 获取状态文本
+        getStatusText(status) {
+          const statusTexts = {
+            'uploaded': '未处理',
+            'processing': '处理中',
+            'processed': '已处理',
+            'failed': '处理失败'
+          };
+          return statusTexts[status] || '未知状态';
+        }
       },
     }).mount('#app');
   </script>
