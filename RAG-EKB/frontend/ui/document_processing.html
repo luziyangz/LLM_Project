@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档处理配置 - RAG-EKB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .document-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .processing-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        .config-section {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #e9ecef;
+        }
+        .log-container {
+            background: #f8f9fa;
+            color: #212529;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container mt-5">
+        <!-- 标题 -->
+        <h1 class="mb-4">RAG Demo - 文档处理配置</h1>
+        <!-- 导航 -->
+        <nav class="mb-4">
+            <a href="chat.html" class="btn btn-primary me-2">前往对话页面</a>
+            <a href="documents.html" class="btn btn-secondary">返回文档管理</a>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- 文档选择区域 -->
+            <div class="processing-card">
+                <h4><i class="fas fa-file-upload me-2"></i>选择要处理的文档</h4>
+                
+                <!-- 状态筛选 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">状态筛选</label>
+                        <select class="form-select" v-model="statusFilter" @change="filterDocuments">
+                            <option value="all">全部文档</option>
+                            <option value="completed">已处理</option>
+                            <option value="processing">处理中</option>
+                            <option value="failed">处理失败</option>
+                            <option value="pending">未处理</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mt-4">
+                            <span class="badge bg-success me-2">已处理: {{ getStatusCount('completed') }}</span>
+                            <span class="badge bg-warning me-2">处理中: {{ getStatusCount('processing') }}</span>
+                            <span class="badge bg-danger me-2">失败: {{ getStatusCount('failed') }}</span>
+                            <span class="badge bg-secondary me-2">未处理: {{ getStatusCount('pending') }}</span>
+                            <span class="badge bg-info">当前显示: {{ filteredDocuments.length }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">选择文档 (支持多选)</label>
+                        <div v-if="statusFilter !== 'all'" class="alert alert-info py-1 px-2 mb-2">
+                            <small><i class="fas fa-filter me-1"></i>当前筛选: {{ getFilterLabel() }} ({{ filteredDocuments.length }} 个文档)</small>
+                        </div>
+                        
+                        <!-- 全选/取消全选 -->
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary me-2" @click="selectAll">
+                                <i class="fas fa-check-square me-1"></i>全选
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" @click="clearSelection">
+                                <i class="fas fa-square me-1"></i>清空
+                            </button>
+                            <span class="text-muted">已选择: {{ selectedDocuments.length }} 个文档</span>
+                        </div>
+                        
+                        <!-- 文档列表 -->
+                        <div class="document-selection-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 6px; padding: 10px;">
+                            <div v-if="filteredDocuments.length === 0" class="text-center text-muted py-3">
+                                <i class="fas fa-inbox me-2"></i>暂无文档
+                            </div>
+                            <div v-for="doc in filteredDocuments" :key="doc.id" class="form-check mb-2">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    :id="'doc-' + doc.id" 
+                                    :value="doc.id" 
+                                    v-model="selectedDocuments"
+                                    @change="updateDocumentInfo"
+                                >
+                                <label class="form-check-label w-100" :for="'doc-' + doc.id" style="cursor: pointer;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ doc.name }}</strong>
+                                            <small class="text-muted d-block">{{ formatFileSize(doc.size) }}</small>
+                                        </div>
+                                        <div>
+                                            <span v-if="doc.processing_status === 'processed'" class="badge bg-success">✓ 已处理</span>
+                                            <span v-else-if="doc.processing_status === 'processing'" class="badge bg-warning">⏳ 处理中</span>
+                                            <span v-else-if="doc.processing_status === 'failed'" class="badge bg-danger">✗ 失败</span>
+                                            <span v-else class="badge bg-secondary">○ 未处理</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6" v-if="selectedDocuments.length > 0">
+                        <label class="form-label">选中文档信息</label>
+                        <div class="config-section">
+                            <div v-if="selectedDocuments.length === 1">
+                                <!-- 单个文档详细信息 -->
+                                <p><strong>文件名：</strong>{{ getSingleDocumentInfo().name }}</p>
+                                <p><strong>大小：</strong>{{ formatFileSize(getSingleDocumentInfo().size) }}</p>
+                                <p><strong>创建时间：</strong>{{ formatDate(getSingleDocumentInfo().created_at) }}</p>
+                                <p><strong>处理状态：</strong>
+                                    <span :class="getStatusBadgeClass(getSingleDocumentInfo().processing_status)">
+                                        {{ getStatusText(getSingleDocumentInfo().processing_status) }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div v-else>
+                                <!-- 多个文档统计信息 -->
+                                <p><strong>选中文档数量：</strong>{{ selectedDocuments.length }}</p>
+                                <p><strong>总大小：</strong>{{ formatFileSize(getTotalSize()) }}</p>
+                                <div class="mt-2">
+                                    <h6>状态统计：</h6>
+                                    <span class="badge bg-success me-2">已处理: {{ getSelectedStatusCount('processed') }}</span>
+                                    <span class="badge bg-warning me-2">处理中: {{ getSelectedStatusCount('processing') }}</span>
+                                    <span class="badge bg-danger me-2">失败: {{ getSelectedStatusCount('failed') }}</span>
+                                    <span class="badge bg-secondary">未处理: {{ getSelectedStatusCount('uploaded') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 处理策略配置 -->
+            <div class="processing-card" v-if="selectedDocuments.length > 0">
+                <h4><i class="fas fa-cog me-2"></i>处理策略配置</h4>
+                
+                <!-- 分块策略 -->
+                <div class="config-section">
+                    <h5><i class="fas fa-cut me-2"></i>文本分块策略</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">分块方法</label>
+                            <!-- 在分块方法选择中添加DOCX选项 -->
+                            <select class="form-select" v-model="processingConfig.chunking.method">
+                                <option value="fixed_size">固定大小分块</option>
+                                <option value="semantic">语义分块</option>
+                                <option value="sentence">句子分块</option>
+                                <option value="paragraph">段落分块</option>
+                                <option value="regex">正则表达式分块</option>
+                                <option value="custom_regex">自定义正则分块</option>
+                                <option value="paragraph_regex">段落正则分块</option>
+                                <option value="sentence_regex">句子正则分块</option>
+                                <option value="heading_regex">标题正则分块</option>
+                                <option value="langchain_character">LangChain字符分块</option>
+                                <option value="pdf_structure">PDF结构化分块</option>
+                                <option value="docx_structure">DOCX结构化分块</option> <!-- 添加DOCX选项 -->
+                                <option value="mineru">MinerU智能解析</option>
+                                <option value="markdown">Markdown结构化分块</option>
+                            </select>
+                            
+                            <!-- 添加DOCX特定配置 -->
+                            <div class="col-md-12" v-if="processingConfig.chunking.method === 'docx_structure'">
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-file-word me-2"></i>DOCX结构化处理配置</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.preserve_headers">
+                                                    <label class="form-check-label">保持标题结构</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.preserve_tables">
+                                                    <label class="form-check-label">保持表格完整性</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.include_metadata">
+                                                    <label class="form-check-label">包含元数据信息</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="col-md-4">
+                            <label class="form-label">块大小 (字符数)</label>
+                            <input type="number" class="form-control" v-model="processingConfig.chunking.chunk_size" min="100" max="2000">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">重叠大小 (字符数)</label>
+                            <input type="number" class="form-control" v-model="processingConfig.chunking.overlap_size" min="0" :max="processingConfig.chunking.chunk_size / 2">
+                        </div>
+                        <!-- 在分块策略配置区域添加正则表达式配置 -->
+                        <div class="col-md-12" v-if="processingConfig.chunking.method.includes('regex')">
+                            <label class="form-label">正则表达式配置</label>
+                            <div class="row">
+                                <div class="col-md-6" v-if="processingConfig.chunking.method === 'custom_regex'">
+                                    <label class="form-label">自定义正则表达式</label>
+                                    <input type="text" class="form-control" v-model="processingConfig.chunking.custom_pattern" 
+                                           placeholder="输入正则表达式模式">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">最小块大小</label>
+                                    <input type="number" class="form-control" v-model="processingConfig.chunking.min_chunk_size" 
+                                           min="20" max="500">
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.merge_small_chunks">
+                                        <label class="form-check-label">合并小块</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 添加MinerU配置区域 -->
+                        <div v-if="processingConfig.chunking.method === 'mineru'" class="config-group">
+                            <label>解析方法:</label>
+                            <select v-model="processingConfig.chunking.parse_method">
+                                <option value="auto">自动检测</option>
+                                <option value="ocr">OCR识别</option>
+                                <option value="txt">文本提取</option>
+                            </select>
+                            
+                            <label>启用公式识别:</label>
+                            <input type="checkbox" v-model="processingConfig.chunking.enable_formula">
+                            
+                            <label>启用表格识别:</label>
+                            <input type="checkbox" v-model="processingConfig.chunking.enable_table">
+                            
+                            <label>启用OCR:</label>
+                            <input type="checkbox" v-model="processingConfig.chunking.enable_ocr">
+                            
+                            <label>设备模式:</label>
+                            <select v-model="processingConfig.chunking.device_mode">
+                                <option value="cpu">CPU</option>
+                                <option value="cuda">GPU加速</option>
+                            </select>
+                            
+                            <label>语言设置:</label>
+                            <select v-model="processingConfig.chunking.lang">
+                                <option value="ch">中文</option>
+                                <option value="en">英文</option>
+                                <option value="japan">日文</option>
+                                <option value="korean">韩文</option>
+                            </select>
+                        </div>
+                       <!-- 在现有配置区域后添加Markdown配置 -->
+                        <div class="col-md-12" v-if="processingConfig.chunking.method === 'markdown'">
+                            <label class="form-label">Markdown配置</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.respect_headers" checked>
+                                        <label class="form-check-label">尊重标题结构</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.preserve_code_blocks" checked>
+                                        <label class="form-check-label">保护代码块</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.include_metadata" checked>
+                                        <label class="form-check-label">包含元数据</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                                
+
+                        <!-- LangChain分块器配置 -->
+                        <div class="col-md-12" v-if="processingConfig.chunking.method === 'langchain_character'">
+                            <label class="form-label">分隔符</label>
+                            <select class="form-select" v-model="processingConfig.chunking.separator">
+                                <option value="double_newline">双换行符 (\\n\\n)</option>
+                                <option value="single_newline">单换行符 (\\n)</option>
+                                <option value="period_space">句号+空格 (. )</option>
+                                <option value="space">空格 ( )</option>
+                                <option value="character">字符级别</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6" v-if="processingConfig.chunking.separator === 'custom'">
+                            <label class="form-label">自定义分隔符</label>
+                            <input type="text" class="form-control" v-model="processingConfig.chunking.custom_separator"
+                                   placeholder="输入自定义分隔符">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF结构化配置 -->
+                <div v-if="processingConfig.chunking.method === 'pdf_structure'">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-file-pdf me-2"></i>PDF结构化配置</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.preserve_structure">
+                                        <label class="form-check-label">保持结构</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.extract_images">
+                                        <label class="form-check-label">提取图片</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" v-model="processingConfig.chunking.extract_tables">
+                                        <label class="form-check-label">提取表格</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 向量化策略 -->
+            <div class="config-section">
+                <h5><i class="fas fa-vector-square me-2"></i>向量化策略</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">嵌入模型</label>
+                        <select class="form-select" v-model="processingConfig.embedding.model">
+                            <option value="text-embedding-ada-002">OpenAI Ada-002</option>
+                            <option value="text-embedding-3-small">OpenAI Embedding-3-Small</option>
+                            <option value="text-embedding-3-large">OpenAI Embedding-3-Large</option>
+                            <option value="bge-large-zh">BGE Large Chinese</option>
+                            <option value="m3e-base">M3E Base</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">批处理大小</label>
+                        <input type="number" class="form-control" v-model="processingConfig.embedding.batchSize" min="1" max="1000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 索引策略 -->
+            <div class="config-section">
+                <h5><i class="fas fa-database me-2"></i>索引策略</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">索引类型</label>
+                        <select class="form-select" v-model="processingConfig.indexing.indexType">
+                            <option value="flat">平面索引 (Flat)</option>
+                            <option value="ivf">倒排文件索引 (IVF)</option>
+                            <option value="hnsw">分层导航小世界 (HNSW)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">聚类数量</label>
+                        <input type="number" class="form-control" v-model="processingConfig.indexing.nlist" min="1" max="10000">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">相似度阈值</label>
+                        <input type="number" class="form-control" v-model="processingConfig.indexing.similarity_threshold" min="0" max="1" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预处理选项 -->
+            <div class="config-section">
+                <h5><i class="fas fa-filter me-2"></i>预处理选项</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="processingConfig.preprocessing.remove_duplicates">
+                            <label class="form-check-label">去除重复内容</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="processingConfig.preprocessing.clean_text">
+                            <label class="form-check-label">清理文本格式</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="processingConfig.preprocessing.extract_metadata">
+                            <label class="form-check-label">提取元数据</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="processingConfig.preprocessing.language_detection">
+                            <label class="form-check-label">语言检测</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="d-flex justify-content-between mt-4">
+                <div>
+                    <button class="btn btn-secondary me-2" @click="loadPreset('default')">
+                        <i class="fas fa-undo me-1"></i>默认配置
+                    </button>
+                    <button class="btn btn-info me-2" @click="loadPreset('fast')">
+                        <i class="fas fa-bolt me-1"></i>快速处理
+                    </button>
+                    <button class="btn btn-warning me-2" @click="loadPreset('accurate')">
+                        <i class="fas fa-bullseye me-1"></i>精确处理
+                    </button>
+                </div>
+                <div>
+                    <button 
+                        type="button" 
+                        class="btn btn-success btn-lg" 
+                        @click="startProcessing" 
+                        :disabled="processing || selectedDocuments.length === 0"
+                    >
+                        <i class="fas fa-play me-2"></i>
+                        {{ selectedDocuments.length > 1 ? `批量处理 (${selectedDocuments.length} 个文档)` : '开始处理' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 处理进度 -->
+        <div class="processing-card" v-if="processing || processingComplete">
+            <h4><i class="fas fa-tasks me-2"></i>处理进度</h4>
+            
+            <div class="progress-container">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>总体进度</span>
+                    <span>{{ Math.round(processingProgress.overall) }}%</span>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar" :style="{width: processingProgress.overall + '%'}"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>文档解析</small>
+                            <small>{{ Math.round(processingProgress.parsing) }}%</small>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-info" :style="{width: processingProgress.parsing + '%'}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>文本分块</small>
+                            <small>{{ Math.round(processingProgress.chunking) }}%</small>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-warning" :style="{width: processingProgress.chunking + '%'}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>向量化</small>
+                            <small>{{ Math.round(processingProgress.embedding) }}%</small>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-success" :style="{width: processingProgress.embedding + '%'}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>索引构建</small>
+                            <small>{{ Math.round(processingProgress.indexing) }}%</small>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-danger" :style="{width: processingProgress.indexing + '%'}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 处理日志 -->
+        <div class="processing-card" v-if="processing || processingComplete">
+            <h4><i class="fas fa-list-alt me-2"></i>处理日志</h4>
+            <div class="log-container" ref="logContainer">
+                <div v-for="log in processingLogs" :key="log.id" class="mb-1">
+                    <span class="text-muted">[{{ formatTime(log.timestamp) }}]</span>
+                    <span :class="getLogClass(log.level)">{{ log.message }}</span>
+                </div>
+                <div v-if="processingLogs.length === 0" class="text-muted">
+                    等待处理开始...
+                </div>
+            </div>
+        </div>
+
+        <!-- 处理结果 -->
+        <div class="processing-card" v-if="processingComplete">
+            <h4><i class="fas fa-check-circle me-2 text-success"></i>处理完成</h4>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-primary">{{ processingResult.chunk_count || 0 }}</h5>
+                        <small class="text-muted">文档块数</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-info">{{ processingResult.vector_dimension || 0 }}</h5>
+                        <small class="text-muted">向量维度</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-warning">{{ formatFileSize(processingResult.index_size || 0) }}</h5>
+                        <small class="text-muted">索引大小</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <h5 class="text-success">{{ (processingResult.processing_time || 0).toFixed(2) }}s</h5>
+                        <small class="text-muted">处理时间</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    documents: [],
+                    filteredDocuments: [],
+                    statusFilter: 'all',
+                    selectedDocuments: [],
+                    documentInfo: {},
+                    processing: false,
+                    processingComplete: false,
+                    processingConfig: {
+                        chunking: {
+                            method: 'fixed_size',
+                            chunk_size: 1000,
+                            overlap_size: 200,
+                            custom_pattern: '',
+                            min_chunk_size: 100,
+                            merge_small_chunks: true,
+                            preserve_headers: true,
+                            preserve_tables: true,
+                            include_metadata: true,
+                            separator: 'double_newline',
+                            custom_separator: '',
+                            preserve_structure: true,
+                            extract_images: false,
+                            extract_tables: true,
+                            parse_method: 'auto',
+                            enable_formula: true,
+                            enable_table: true,
+                            enable_ocr: false,
+                            device_mode: 'cpu',
+                            lang: 'zh',
+                            respect_headers: true,
+                            preserve_code_blocks: true,
+                            separators: ['\n\n', '\n', '.', '!', '?']
+                        },
+                        embedding: {
+                            model: 'text-embedding-ada-002',
+                            dimensions: 1536,
+                            batchSize: 100
+                        },
+                        indexing: {
+                            vectorStore: 'faiss',
+                            similarity: 'cosine',
+                            indexType: 'flat',
+                            nlist: 100,
+                            similarity_threshold: 0.7
+                        },
+                        preprocessing: {
+                            removeStopwords: true,
+                            lowercase: true,
+                            removeSpecialChars: false,
+                            remove_duplicates: true,
+                            clean_text: true,
+                            extract_metadata: true,
+                            language_detection: false
+                        }
+                    },
+                    processingProgress: {
+                        overall: 0,
+                        parsing: 0,
+                        chunking: 0,
+                        embedding: 0,
+                        indexing: 0
+                    },
+                    processingLogs: [],
+                    processingResult: {}
+                }
+            },
+            mounted() {
+                this.fetchDocuments();
+                const urlParams = new URLSearchParams(window.location.search);
+                const documentId = urlParams.get('documentId');
+                if (documentId) {
+                    this.selectedDocuments = [documentId];
+                    this.updateDocumentInfo();
+                }
+            },
+            methods: {
+                async fetchDocuments() {
+                    try {
+                        const response = await axios.get('/api/documents');
+                        this.documents = response.data;
+                        this.filterDocuments();
+                    } catch (error) {
+                        console.error('获取文档列表失败:', error);
+                    }
+                },
+                
+                filterDocuments() {
+                    if (this.statusFilter === 'all') {
+                        this.filteredDocuments = this.documents;
+                    } else if (this.statusFilter === 'pending') {
+                        this.filteredDocuments = this.documents.filter(doc => 
+                            !doc.processing_status || doc.processing_status === 'uploaded'
+                        );
+                    } else {
+                        const statusMap = {
+                            'completed': 'processed',
+                            'pending': 'uploaded'
+                        };
+                        const actualStatus = statusMap[this.statusFilter] || this.statusFilter;
+                        this.filteredDocuments = this.documents.filter(doc => 
+                            doc.processing_status === actualStatus
+                        );
+                    }
+                    
+                    const filteredIds = this.filteredDocuments.map(doc => doc.id);
+                    this.selectedDocuments = this.selectedDocuments.filter(id => filteredIds.includes(id));
+                    this.updateDocumentInfo();
+                },
+                
+                getStatusCount(status) {
+                    if (status === 'all') {
+                        return this.documents.length;
+                    }
+                    if (status === 'pending') {
+                        return this.documents.filter(doc => 
+                            !doc.processing_status || doc.processing_status === 'uploaded'
+                        ).length;
+                    }
+                    const statusMap = {
+                        'completed': 'processed',
+                        'pending': 'uploaded'
+                    };
+                    const actualStatus = statusMap[status] || status;
+                    return this.documents.filter(doc => doc.processing_status === actualStatus).length;
+                },
+                
+                getFilterLabel() {
+                    const labels = {
+                        'all': '全部',
+                        'pending': '待处理',
+                        'processing': '处理中',
+                        'completed': '已完成',
+                        'failed': '失败'
+                    };
+                    return labels[this.statusFilter] || '全部';
+                },
+                
+                selectAll() {
+                    this.selectedDocuments = this.filteredDocuments.map(doc => doc.id);
+                    this.updateDocumentInfo();
+                },
+                
+                clearSelection() {
+                    this.selectedDocuments = [];
+                    this.documentInfo = {};
+                },
+                
+                updateDocumentInfo() {
+                    if (this.selectedDocuments.length === 1) {
+                        const docId = this.selectedDocuments[0];
+                        this.documentInfo = this.documents.find(doc => doc.id === docId) || {};
+                    } else {
+                        this.documentInfo = {};
+                    }
+                },
+                
+                getSingleDocumentInfo() {
+                    if (this.selectedDocuments.length === 1) {
+                        const docId = this.selectedDocuments[0];
+                        return this.documents.find(doc => doc.id === docId) || {};
+                    }
+                    return {};
+                },
+                
+                getTotalSize() {
+                    return this.selectedDocuments.reduce((total, docId) => {
+                        const doc = this.documents.find(d => d.id === docId);
+                        return total + (doc ? doc.size : 0);
+                    }, 0);
+                },
+                
+                getSelectedStatusCount(status) {
+                    return this.selectedDocuments.filter(docId => {
+                        const doc = this.documents.find(d => d.id === docId);
+                        if (status === 'uploaded') {
+                            return !doc?.processing_status || doc.processing_status === 'uploaded';
+                        }
+                        return doc?.processing_status === status;
+                    }).length;
+                },
+                
+                getStatusBadgeClass(status) {
+                    const classes = {
+                        'processed': 'badge bg-success',
+                        'processing': 'badge bg-warning',
+                        'failed': 'badge bg-danger',
+                        'uploaded': 'badge bg-secondary'
+                    };
+                    return classes[status] || 'badge bg-secondary';
+                },
+                
+                getStatusText(status) {
+                    const texts = {
+                        'processed': '已处理',
+                        'processing': '处理中',
+                        'failed': '失败',
+                        'uploaded': '未处理'
+                    };
+                    return texts[status] || '未知';
+                },
+                
+                getFileTypeDisplay(filename) {
+                    const ext = filename.split('.').pop().toLowerCase();
+                    const types = {
+                        'pdf': 'PDF',
+                        'doc': 'Word',
+                        'docx': 'Word',
+                        'txt': '文本',
+                        'md': 'Markdown'
+                    };
+                    return types[ext] || '文档';
+                },
+                
+                getFileTypeBadgeClass(filename) {
+                    const ext = filename.split('.').pop().toLowerCase();
+                    const classes = {
+                        'pdf': 'badge bg-danger',
+                        'doc': 'badge bg-primary',
+                        'docx': 'badge bg-primary',
+                        'txt': 'badge bg-secondary',
+                        'md': 'badge bg-info'
+                    };
+                    return classes[ext] || 'badge bg-secondary';
+                },
+                
+                async loadDocumentInfo(documentId) {
+                    try {
+                        const response = await axios.get(`/api/documents/${documentId}`);
+                        return response.data;
+                    } catch (error) {
+                        console.error('加载文档信息失败:', error);
+                        return null;
+                    }
+                },
+                
+                async loadPreset(presetType) {
+                    try {
+                        const response = await axios.get('/api/processing_presets');
+                        const presets = response.data;
+                        if (presets[presetType]) {
+                            this.processingConfig = { ...presets[presetType].config };
+                        }
+                    } catch (error) {
+                        console.error('加载预设配置失败:', error);
+                    }
+                },
+                
+                async startProcessing() {
+                    if (this.selectedDocuments.length === 0) {
+                        alert('请先选择要处理的文档');
+                        return;
+                    }
+                    
+                    this.processing = true;
+                    this.processingComplete = false;
+                    this.processingLogs = [];
+                    this.processingProgress = { overall: 0, parsing: 0, chunking: 0, embedding: 0, indexing: 0 };
+                    
+                    try {
+                        const response = await axios.post('/api/process_documents', {
+                            document_ids: this.selectedDocuments,
+                            config: this.processingConfig
+                        });
+                        
+                        this.addLog('info', `开始批量处理 ${this.selectedDocuments.length} 个文档...`);
+                        this.simulateProgress();
+                        
+                    } catch (error) {
+                        console.error('批量文档处理失败:', error);
+                        this.addLog('error', '批量文档处理失败: ' + error.message);
+                        this.processing = false;
+                    }
+                },
+                
+                simulateProgress() {
+                    const interval = setInterval(() => {
+                        this.processingProgress.parsing = Math.min(100, this.processingProgress.parsing + Math.random() * 10);
+                        this.processingProgress.chunking = Math.min(100, this.processingProgress.chunking + Math.random() * 8);
+                        this.processingProgress.embedding = Math.min(100, this.processingProgress.embedding + Math.random() * 6);
+                        this.processingProgress.indexing = Math.min(100, this.processingProgress.indexing + Math.random() * 4);
+                        
+                        this.processingProgress.overall = (
+                            this.processingProgress.parsing + 
+                            this.processingProgress.chunking + 
+                            this.processingProgress.embedding + 
+                            this.processingProgress.indexing
+                        ) / 4;
+                        
+                        if (this.processingProgress.overall >= 100) {
+                            clearInterval(interval);
+                            this.processing = false;
+                            this.processingComplete = true;
+                            this.addLog('success', '文档处理完成！');
+                            this.processingResult = {
+                                chunk_count: 156,
+                                vector_dimension: 1536,
+                                index_size: 2048576,
+                                processing_time: 45.6
+                            };
+                        }
+                    }, 500);
+                },
+                
+                addLog(level, message) {
+                    this.processingLogs.push({
+                        id: Date.now(),
+                        timestamp: new Date(),
+                        level: level,
+                        message: message
+                    });
+                    
+                    this.$nextTick(() => {
+                        if (this.$refs.logContainer) {
+                            this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight;
+                        }
+                    });
+                },
+                
+                getLogClass(level) {
+                    const classes = {
+                        info: 'text-info',
+                        success: 'text-success',
+                        warning: 'text-warning',
+                        error: 'text-danger'
+                    };
+                    return classes[level] || 'text-muted';
+                },
+                
+                formatTime(date) {
+                    return date.toLocaleTimeString();
+                },
+                
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+                
+                formatDate(dateString) {
+                    if (!dateString) return '未知';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('zh-CN');
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
