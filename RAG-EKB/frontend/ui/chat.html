@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RAG Demo - 对话</title>
+  <title>企业智能问答系统 - 对话</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Vue.js -->
@@ -228,6 +228,91 @@
       border-top: 1px solid #444;
     }
 
+    /* MCP相关样式 - 修改为与其他开关一致 */
+    .mcp-panel {
+      /* 移除原有的浅色背景和边框 */
+      /* border: 1px solid #e0e0e0; */
+      /* border-radius: 8px; */
+      /* padding: 12px; */
+      /* background-color: #f8f9fa; */
+      
+      /* 使用与侧边栏一致的样式 */
+      margin-top: 0.5rem;
+    }
+
+    .mcp-tools .form-select {
+      font-size: 0.875rem;
+      background-color: #343541;
+      border-color: #444654;
+      color: white;
+    }
+
+    .mcp-tools .form-select:focus {
+      background-color: #343541;
+      border-color: #007bff;
+      color: white;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .mcp-tools .form-select option {
+      background-color: #343541;
+      color: white;
+    }
+
+    .mcp-params {
+      background-color: #343541;
+      border-radius: 6px;
+      padding: 10px;
+      border: 1px solid #444654;
+    }
+
+    .mcp-params .form-label {
+      color: white;
+      font-size: 0.875rem;
+    }
+
+    .mcp-params .form-control {
+      background-color: #444654;
+      border-color: #555;
+      color: white;
+    }
+
+    .mcp-params .form-control:focus {
+      background-color: #444654;
+      border-color: #007bff;
+      color: white;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .mcp-params .form-control::placeholder {
+      color: #aaa;
+    }
+
+    .mcp-results {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .mcp-result-item {
+      margin-bottom: 10px;
+    }
+
+    .mcp-result-item .card {
+      background-color: #f1f3f4;
+      border: 1px solid #dadce0;
+    }
+
+    .mcp-result-item pre {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 0.75rem;
+      margin: 8px 0 0 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
     /* 响应式设计 */
     @media (max-width: 992px) {
       .sidebar {
@@ -303,10 +388,61 @@
           <input class="form-check-input" type="checkbox" id="ragSwitch" v-model="ragEnabled">
           <label class="form-check-label" for="ragSwitch">启用知识库问答</label>
         </div>
+        
+        <!-- MCP工具面板 -->
+        <div class="form-check form-switch mt-2 text-white">
+          <input class="form-check-input" type="checkbox" id="mcpEnabled" v-model="mcpEnabled">
+          <label class="form-check-label" for="mcpEnabled">
+            <i class="fas fa-tools"></i> MCP工具
+          </label>
+        </div>
+        
+        <!-- MCP工具选择和参数区域 -->
+        <div v-if="mcpEnabled" class="mcp-tools mt-2">
+          <select class="form-select form-select-sm" v-model="selectedMcpTool" @change="onMcpToolChange">
+            <option value="">选择MCP工具</option>
+            <option v-for="(tool, key) in mcpTools" :key="key" :value="key">
+              {{ tool.name }}
+            </option>
+          </select>
+          
+          <div v-if="selectedMcpTool" class="mcp-params mt-2">
+            <div v-for="(param, paramName) in mcpToolParams" :key="paramName" class="mb-2">
+              <label class="form-label small">{{ param.description }}</label>
+              <input 
+                type="text" 
+                class="form-control form-control-sm" 
+                v-model="mcpParams[paramName]"
+                :placeholder="param.description"
+              >
+            </div>
+            <button class="btn btn-primary btn-sm" @click="executeMcpTool">
+              <i class="fas fa-play"></i> 执行工具
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <!-- 对话区域 -->
     <div class="chat-container" ref="chatContainer">
+      <!-- MCP结果显示区域 -->
+      <div v-if="mcpResults.length > 0" class="mcp-results mb-3">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="fas fa-tools"></i> MCP工具执行结果</h6>
+            <button class="btn btn-sm btn-outline-secondary" @click="mcpResults = []">×</button>
+          </div>
+          <div class="card-body">
+            <div v-for="(result, index) in mcpResults" :key="index" class="mcp-result-item mb-2">
+              <div class="card card-body small">
+                <strong>{{ result.tool }}</strong>
+                <pre class="mt-2">{{ JSON.stringify(result.data, null, 2) }}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- RAG信息显示区域 -->
       <div v-if="ragInfo.visible" class="rag-info-container mb-3">
         <div class="card">
@@ -727,6 +863,13 @@
             hasContext: false,
             sources: []
           },
+          // MCP相关数据
+          mcpEnabled: false, // MCP开关
+          mcpTools: {}, // 可用的MCP工具
+          selectedMcpTool: '', // 选中的工具
+          mcpToolParams: {}, // 当前工具的参数定义
+          mcpParams: {}, // 用户输入的参数值
+          mcpResults: [], // MCP执行结果
           logger: new LogService.Logger('Vue-App', { tags: ['vue', 'ui'] }) // 使用新的日志服务
         };
       },
@@ -735,6 +878,7 @@
         this.fetchChatHistory();
         this.initSpeechRecognition();
         this.testServerConnection();
+        this.loadMcpTools();
       },
       beforeUnmount() {
         this.logger.infoWithTags(['lifecycle'], '应用即将卸载');
@@ -1031,6 +1175,66 @@
             return date.toLocaleDateString('zh-CN');
           }
         },
+        
+        // MCP相关方法
+        async loadMcpTools() {
+          try {
+            const response = await axios.get(`${API_BASE_URL}/api/mcp/tools`);
+            this.mcpTools = response.data.tools || response.data;
+            this.logger.infoWithTags(['mcp'], '加载MCP工具:', Object.keys(this.mcpTools));
+          } catch (error) {
+            this.logger.errorWithTags(['mcp'], '加载MCP工具失败:', error);
+          }
+        },
+        
+        onMcpToolChange() {
+          if (this.selectedMcpTool && this.mcpTools[this.selectedMcpTool]) {
+            this.mcpToolParams = this.mcpTools[this.selectedMcpTool].parameters || this.mcpTools[this.selectedMcpTool].inputSchema?.properties || {};
+            this.mcpParams = {};
+            // 初始化参数默认值
+            Object.keys(this.mcpToolParams).forEach(paramName => {
+              this.mcpParams[paramName] = '';
+            });
+          } else {
+            this.mcpToolParams = {};
+            this.mcpParams = {};
+          }
+        },
+        
+        async executeMcpTool() {
+          if (!this.selectedMcpTool) return;
+          
+          try {
+            const response = await axios.post(`${API_BASE_URL}/api/mcp/execute`, {
+              tool: this.selectedMcpTool,
+              parameters: this.mcpParams,
+              arguments: this.mcpParams
+            });
+            
+            const result = response.data;
+            
+            this.mcpResults.unshift({
+              tool: this.mcpTools[this.selectedMcpTool].name,
+              data: result.success ? result.result : result,
+              timestamp: new Date().toLocaleString(),
+              success: result.success !== false
+            });
+            
+            // 限制结果数量
+            if (this.mcpResults.length > 10) {
+              this.mcpResults = this.mcpResults.slice(0, 10);
+            }
+            
+            this.logger.infoWithTags(['mcp'], 'MCP工具执行成功:', this.selectedMcpTool);
+            
+            if (result.success === false) {
+              alert('工具执行失败: ' + (result.error || '未知错误'));
+            }
+          } catch (error) {
+            this.logger.errorWithTags(['mcp'], 'MCP工具执行失败:', error);
+            alert('MCP工具执行失败: ' + (error.response?.data?.message || error.message));
+          }
+        },
       },
     }).mount('#app');
   </script>
@@ -1039,6 +1243,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Bootstrap Icons for mic icon -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Font Awesome for MCP icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 </body>
 </html>
