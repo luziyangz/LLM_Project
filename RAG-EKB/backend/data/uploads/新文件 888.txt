@@ -1,0 +1,28 @@
+
+
+
+
+
+private BroadcastReceiver ScreenReceiver  = new BroadcastReceiver() {  
+  
+    @Override  
+    public void onReceive(Context context, Intent intent) {  
+        if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {  
+            // 屏幕已开启，执行隐藏导航栏的代码  
+            hideNavBar();
+			showFullScreenWithoutStatusBar();
+        }  
+    }
+   }	
+	|
+	onResume 中
+	IntentFilter filter = new IntentFilter();  
+	filter.addAction(Intent.ACTION_SCREEN_ON);  
+	filter.addAction(Intent.ACTION_SCREEN_OFF);
+	registerReceiver(ScreenReceiver, filter);
+	
+
+
+	onstop 中：
+	        unregisterReceiver(ScreenReceiver);
+

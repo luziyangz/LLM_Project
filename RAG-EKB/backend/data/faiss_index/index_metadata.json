@@ -1,0 +1,24 @@
+[
+  {
+    "content": "1. 硬件输入事件发生 --> kernel 层 -- > 事件层 -- > 用户空间 kernel 层： 1. 驱动层首先 进行中断注册： request_irq() 函数 2. 当中断函数发生时，中断处理函数被执行，调用input接口: input_report_key ：input_sync 上报事件 用户空间： 通过读取 驱动节点 和 getEvents 的数值，来读取事件",
+    "created_at": "2025-06-21T17:01:41.022556",
+    "chunk_id": 0,
+    "source_file": "E:/code/AIProjectCode/trae_code/project/RAG-EKB/backend/file\\input输入事件.txt",
+    "start_pos": 0,
+    "end_pos": 192,
+    "chunk_type": "fixed_length",
+    "char_count": 192,
+    "word_count": 29
+  },
+  {
+    "content": "1. 硬件输入事件发生 --> kernel 层 -- > 事件层 -- > 用户空间 kernel 层： 1. 驱动层首先 进行中断注册： request_irq() 函数 2. 当中断函数发生时，中断处理函数被执行，调用input接口: input_report_key ：input_sync 上报事件 用户空间： 通过读取 驱动节点 和 getEvents 的数值，来读取事件",
+    "created_at": "2025-06-22T18:21:57.966286",
+    "chunk_id": 0,
+    "source_file": "E:/code/AIProjectCode/trae_code/project/RAG-EKB/backend/file\\input输入事件.txt",
+    "start_pos": 0,
+    "end_pos": 192,
+    "chunk_type": "fixed_length",
+    "char_count": 192,
+    "word_count": 29
+  }
+]

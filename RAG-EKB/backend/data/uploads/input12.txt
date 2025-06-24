@@ -1,0 +1,21 @@
+https://www.kernel.org/doc/Documentation/input/
+
+
+adb shell getevent -ltr                               ||| 查看当前输入事件，方法：adb 之后，复测
+
+
+//kernel 地址  
+
+// driver/input/input.c                                  
+
+
+——set_bit()在内存中设置一位
+
+
+
+
+input_event（输入设备的结构体，type，请求码，值）                                          该方法进行处理事件
+
+
+
+

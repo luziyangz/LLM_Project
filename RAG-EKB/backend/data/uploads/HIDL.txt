@@ -1,0 +1,158 @@
+HIDL:HAL接口定义语言。独立、用于进行间通信。媒介：binder
+
+	Android O 之前：HAL是一个个.so库。通过dlopen来进行打开，位于同一进程。
+	新的结构中：framwork 和 hal 运行于不同的进程，所有hal采用新的hidl技术来完成。
+		直通式HAL：FWK 和 HAL  位于同一进程，下层的HAl使用HIDL封装之后的库。
+		绑定式： 也可以使用so库 直通式HAL binder 化，FWK 和 HAL 位于不同的进程，通过binder 进行通信
+			binder:两者之间的媒介
+		纯绑定式： 只能通过binder 进行通信
+一、.hal 文件
+	1 types.hal 文件
+		定义一些数据结构
+	2.IFactoryCmd.hal 文件
+		和驱动节点进行交互、操作数据
+	3.calback.hal 
+		回调数据给应用
+二、hidl-gen
+	,hal 文件接口 通过 hidl-gen 转换成相应的代码。位于：system/tools/hidl 
+		使用条件：
+			1.编译环境下执行
+				source buid/envsetup.sh 
+				lunch 跟编译的内容
+			2.执行脚本.sh文件， 需要导环境才能够执行 update-makefiles.sh 
+		使用方式：
+			1.在在根目录下创建 ：root/example/1.0/xxx.hal 
+				根目录可以在android.bp或.mk文件设置自行修改：默认在handware.interfaces
+					hidl_package_root:{
+						name:"interfaces", // 根
+						path:"XXX/XXXX/XXXX/XXXX/interfaces", //根所在的绝对路径
+					}
+                                                                                             
+                                                                                             
+																							 
+			2.使用hidl 命令生成定义的.hal 文件的 cpp文件
+				定义包名：PACKAGE=interfaces.example@1.0
+				定义输出路径：LOC=XXX/XXX/XXXX
+				
+				hidl-gen -o $LOC -L c++impl -r interfaces:XXX/XXXX/XXXX/XXXX/interfaces -r android.hidl:system/libhidl/transport $PACKAGE 
+					-o : 输出路径
+					-L : 语言类型 hidl-gen -h 可查
+					-r : 包名和文件所在的目录  根:根的绝对路径,这个一定要正确，否则会出现找不到资源等等错误
+					-r : 一般固定
+					$ PACKAGE : 定义的报名，完全限定的输入文件。例如：PACKAGE=interfaces.example@1.0 要求必须在XXX/XXX/XXXX/XXXX/interfaces/example/1.0/..
+																		必须有相关文件，否则会出现找不到资源
+																		
+                                                                                             
+                                                                                             
+																							 
+			3. 使用hidl命令生成bp文件 andorid.bp 会在输出目录下形成
+				hidl-gen -o $LOC -L android.bpimpl -r interfaces:XXX/XXXX/XXXX/XXXX/interfaces -r android.hidl:system/libhidl/transport $PACKAGE 
+
+                                                                                             
+                                                                                             
+																							 
+			4. 每一个.hal文件都会有一个队形的hash值，使用hidl命令将生成的hash码加到current.txt 文件中
+				current.txt : 每一个包根目录下都会有一个current.txt 
+                                                                                             
+                                                                                             
+																							 
+			5. 更新andoid.bp 文件
+				脚本L:update-makefiles.sh ，一般在根目录下都会有， 参考hardware/interfaces/upfate-makefiles.sh 
+					主要内容也是一些hidel-gen 命令：
+						hidl-gen -Lmakefile -r interfaces:XXX/XXXX/XXXX/XXXX/interfaces -r android.hidl:system/libhidl/transport $PACKAGE
+						hidl-gen -Landroidbp -r interfaces:XXX/XXXX/XXXX/XXXX/interfaces -r android.hidl:system/libhidl/transport $PACKAGE
+
+                                                                                             
+                                                                                             
+																							 
+			6. 对于步骤2生成的cpp文件可以进行相关的修改，实现对应的构造方法、析构方法
+					types.hal :  
+					IFactoryCmd.hal : 定义的名字.cpp 构造方法、析构方法 对指定生成的方法进行拓展
+					calback.hal : 同上
+
+                                                                                             
+                                                                                             
+					
+					
+			7.建立一个新的service.pp文件，作为入口，用来绑定HAl
+					int main{
+						configureRpcThreadpool(int ,true);
+						....
+						registerAsService();
+					}
+                                                                                             
+                                                                                             
+
+			8.建立interfaces.example@1.0-service.rc 启动脚本
+				····// 一些与HAL相关的init rc脚本
+					service vendor.some-service-name（名称自定义） /vendor/bin/hw/some-binary-service（自定义）
+						//- init语言扩展名，提供服务的信息
+						//如果提供多个接口，则可以在每行指定一个接口
+						interface android.hardware.light@2.0::ILight default 
+						//如果hwservicemanager死亡，则重启
+						//在启动期间，如果disabled没有设置，也会导致hal启动过早
+						class hal
+						//如果它退出将不会重新启动，直到被请求重新启动，只启动一次
+						oneshot 
+						// 只有在被请求时才会启动
+						disabled
+						//其他属性
+			9. manifest.xml文件 
+					<hal format="hidl">
+						<name>interfaces.example</name>
+						<transport>hwbinder</transport>
+						<version>1.0</version>
+						<interface>
+							<name>IXXXX</name>
+							<instance>default</instance>
+						</interface>
+					</hal>
+
+                                                                                             
+                                                                                            
+					
+			10. android/device/qcom/msm8996/msm8996.mk文件
+				开机自启动.c 文件 
+			
+                                                                                             
+                                                                                            			
+			
+			11. 修改相关的bp文件
+			
+                                                                                             
+                                                                                            
+			12. 增加个selinux 权限
+				
+
+
+
+1.编译环境执行hidl-gen 的编译命令
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+动态关停
+
+# some init.rc script associated with the HAL // 一些与HAL相关的init rc脚本
+service vendor.some-service-name /vendor/bin/hw/some-binary-service
+    # init language extension, provides information of what service is served //- init语言扩展名，提供服务的信息
+    # if multiple interfaces are served, they can be specified one on each line //如果提供多个接口，则可以在每行指定一个接口
+    interface android.hardware.light@2.0::ILight default 
+    # restarted if hwservicemanager dies  
+    # would also cause the hal to start early during boot if disabled wasn't set
+	//如果hwservicemanager死亡，则重启
+	//在启动期间，如果disabled没有设置，也会导致hal启动过早
+    class hal
+    # will not be restarted if it exits until it is requested to be restarted //如果它退出将不会重新启动，直到被请求重新启动
+    oneshot
+    # will only be started when requested // 只有在被请求时才会启动
+    disabled
+    # ... other properties	

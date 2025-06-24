@@ -1,0 +1,37 @@
+           mSensotSize = (Size) c.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE);   // SENSOR_INFO_PIXEL_ARRAY_SIZE:表示摄像头成像区域所使用的内存大小，这个区域就是我们摄像头拍摄照片的最大分辨率
+			
+	
+
+
+
+
+
+通过 TextureView 呈现在UI 界面上
+
+TextureView与普通view 一样使用UI Renderer（渲染器） 绘制到当前 Activity 的窗口上
+ 
+TextureView 的绘制和输出通常会涉及三个线程：
+1. 绘制textureview的线程
+2. 系统操作ui的主线线程
+3. 系统创建的用于绘制所有 View 的内容到当前 Activity 窗口的 Android Render 线程
+
+
+
+进界面，检查TextureView 是否可用，可用的情况会进行打开相机的操作，使用的是Camera2的API,
+openCamera(this.mCameraId, this.mDeviceStateCallback, (Handler) null)  camera信息的获取的配置，并调用CameraManager 的openCamera打开摄像头，camera打开状态在CameraDevice.StateCallback中进行回调.
+
+
+mDeviceStateCallback，可以获取到当前的camera对应的CameraDevice,在onOpened()中执行打开预览的操作。接下来：创建session 
+
+默认缓冲区的大小配置为我们想要的相机预览大小。
+CAMERA2_Rear1ViewfinderStrobe: Surface  Width: 1440 height 1080
+
+ 
+  1、预览图像显示要绑定surface,上层需要拿到预览数据，则可以设置ImageReader的surface进去；
+
+   2、发送预览请求；
+
+   3、建立预览会话。我们创建一个CameraCaptureSession用于相机预览。 
+
+完成这几步，我们就可以看到预览图像了。
+
