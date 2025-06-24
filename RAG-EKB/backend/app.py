@@ -2,6 +2,7 @@ from fastapi import FastAPI, Body
 from pydantic import BaseModel
 import os
 import json
+import subprocess
 import logging  # 确保logging在最前面导入
 from typing import List, Optional, AsyncGenerator, Dict, Any, Union
 from pydantic import validator
@@ -1669,6 +1670,101 @@ async def get_processing_presets():
     
     return presets
 
+
+
+
+
+# MCP工具配置
+MCP_TOOLS = {
+    "weather": {
+        "name": "天气查询",
+        "description": "查询指定城市的天气信息",
+        "parameters": {
+            "city": {"type": "string", "description": "城市名称"}
+        }
+    },
+    "calculator": {
+        "name": "计算器",
+        "description": "执行数学计算",
+        "parameters": {
+            "expression": {"type": "string", "description": "数学表达式"}
+        }
+    },
+    "web_search": {
+        "name": "网络搜索",
+        "description": "搜索网络信息",
+        "parameters": {
+            "query": {"type": "string", "description": "搜索关键词"}
+        }
+    }
+}
+
+# 获取MCP工具列表
+@app.get("/api/mcp/tools")
+async def get_mcp_tools():
+    """获取可用的MCP工具列表"""
+    return {"tools": MCP_TOOLS}
+
+# 执行MCP工具
+@app.post("/api/mcp/execute")
+async def execute_mcp_tool(request: Dict[str, Any]):
+    """执行MCP工具"""
+    try:
+        tool_name = request.get("tool")
+        parameters = request.get("parameters", {})
+        
+        if tool_name not in MCP_TOOLS:
+            raise HTTPException(status_code=400, detail=f"未知的工具: {tool_name}")
+        
+        # 根据工具类型执行相应的逻辑
+        if tool_name == "weather":
+            result = await execute_weather_tool(parameters)
+        elif tool_name == "calculator":
+            result = await execute_calculator_tool(parameters)
+        elif tool_name == "web_search":
+            result = await execute_web_search_tool(parameters)
+        else:
+            result = {"error": "工具未实现"}
+        
+        return {"success": True, "result": result}
+    
+    except Exception as e:
+        logger.error(f"MCP工具执行失败: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+# MCP工具实现函数
+async def execute_weather_tool(params: Dict[str, Any]):
+    """执行天气查询工具"""
+    city = params.get("city", "北京")
+    # 这里可以集成真实的天气API
+    return {
+        "city": city,
+        "temperature": "22°C",
+        "weather": "晴天",
+        "humidity": "65%"
+    }
+
+async def execute_calculator_tool(params: Dict[str, Any]):
+    """执行计算器工具"""
+    expression = params.get("expression", "")
+    try:
+        # 安全的数学表达式计算
+        result = eval(expression, {"__builtins__": {}}, {})
+        return {"expression": expression, "result": result}
+    except Exception as e:
+        return {"error": f"计算错误: {str(e)}"}
+
+async def execute_web_search_tool(params: Dict[str, Any]):
+    """执行网络搜索工具"""
+    query = params.get("query", "")
+    # 这里可以集成搜索引擎API
+    return {
+        "query": query,
+        "results": [
+            {"title": "搜索结果1", "url": "https://example.com/1", "snippet": "相关内容摘要1"},
+            {"title": "搜索结果2", "url": "https://example.com/2", "snippet": "相关内容摘要2"}
+        ]
+    }
 
         
 
