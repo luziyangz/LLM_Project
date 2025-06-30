@@ -1,0 +1,38 @@
+{
+  "tables": [
+    {
+      "table_id": "table_1",
+      "page": 1,
+      "serialized": {
+        "information_blocks": [
+          {
+            "information_block": "财务数据表格第一行"
+          },
+          {
+            "information_block": "营收: 63.2亿美元"
+          },
+          {
+            "information_block": "净利润: 5.2亿美元"
+          }
+        ]
+      }
+    },
+    {
+      "table_id": "table_2",
+      "page": 2,
+      "serialized": {
+        "information_blocks": [
+          {
+            "information_block": "技术节点表格"
+          },
+          {
+            "information_block": "14纳米: 已量产"
+          },
+          {
+            "information_block": "12纳米: 开发中"
+          }
+        ]
+      }
+    }
+  ]
+}

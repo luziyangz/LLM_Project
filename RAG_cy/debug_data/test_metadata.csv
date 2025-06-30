@@ -1,0 +1,5 @@
+sha1,company_name,file_name
+abc123def456,"测试公司A",test_report_a.pdf
+789xyz012uvw,"测试公司B",test_report_b.pdf
+test_hash_001,"中芯国际",中芯国际机构调研纪要.pdf
+test_hash_002,"上海证券",上海证券研究报告.pdf

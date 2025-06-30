@@ -1,0 +1,581 @@
+2025-06-29 23:58:21,362 - INFO - 开始运行 VectorDBIngestor 测试套件
+2025-06-29 23:58:21,363 - INFO - VectorDBIngestor 测试环境初始化完成
+2025-06-29 23:58:21,363 - INFO - === 测试基础初始化 ===
+2025-06-29 23:58:21,363 - INFO - ✓ 默认初始化成功
+2025-06-29 23:58:21,363 - INFO - ✓ API Key 设置成功
+2025-06-29 23:58:21,363 - INFO - 测试耗时: 0.00秒
+2025-06-29 23:58:21,364 - INFO - === 测试单个文本嵌入向量获取 ===
+2025-06-29 23:58:41,374 - INFO - 测试耗时: 20.01秒
+2025-06-29 23:58:41,384 - INFO - === 测试批量文本嵌入向量获取 ===
+2025-06-29 23:58:41,387 - INFO - ✓ 批量文本嵌入向量获取成功，数量: 3
+2025-06-29 23:58:41,388 - INFO - 测试耗时: 0.01秒
+2025-06-29 23:58:41,392 - INFO - === 测试嵌入向量获取错误处理 ===
+2025-06-29 23:59:01,404 - INFO - 测试耗时: 20.01秒
+2025-06-29 23:59:01,404 - INFO - === 测试向量库构建 ===
+2025-06-29 23:59:01,405 - INFO - ✓ 向量库构建成功，向量数量: 3，维度: 5
+2025-06-29 23:59:01,405 - INFO - 测试耗时: 0.00秒
+2025-06-29 23:59:01,405 - INFO - === 测试单个报告处理 ===
+2025-06-29 23:59:01,406 - INFO - ✓ 单个报告处理成功，生成向量数量: 3
+2025-06-29 23:59:01,406 - INFO - 测试耗时: 0.00秒
+2025-06-29 23:59:01,406 - INFO - === 测试批量报告处理 ===
+2025-06-29 23:59:01,407 - INFO - 创建了 2 个测试报告文件
+2025-06-29 23:59:01,424 - INFO - ✓ 批量报告处理成功，处理文件数量: 2
+2025-06-29 23:59:01,424 - INFO - 测试耗时: 0.02秒
+2025-06-29 23:59:01,424 - INFO - === 测试缺少sha1字段错误处理 ===
+2025-06-29 23:59:23,019 - INFO - 测试耗时: 21.60秒
+2025-06-29 23:59:23,021 - INFO - === 测试文本截断功能 ===
+2025-06-29 23:59:43,036 - INFO - 测试耗时: 20.02秒
+2025-06-29 23:59:43,039 - INFO - === 测试性能基准 ===
+2025-06-29 23:59:43,040 - INFO - ✓ 大批量文本处理完成，耗时: 0.001秒，文本数量: 100
+2025-06-29 23:59:43,040 - INFO - 测试耗时: 0.00秒
+2025-06-29 23:59:43,061 - INFO - 
+==================================================
+2025-06-29 23:59:43,061 - INFO - 测试结果摘要:
+2025-06-29 23:59:43,062 - INFO - 总测试数: 10
+2025-06-29 23:59:43,062 - INFO - 成功: 6
+2025-06-29 23:59:43,063 - INFO - 失败: 0
+2025-06-29 23:59:43,063 - INFO - 错误: 4
+2025-06-29 23:59:43,064 - ERROR - 错误的测试:
+2025-06-29 23:59:43,064 - ERROR -   - test_02_get_embeddings_single_text (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 65, in _get_embeddings
+    embeddings.append(resp.output.embedding)
+AttributeError: 'dict' object has no attribute 'output'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 174, in test_02_get_embeddings_single_text
+    embeddings = self.ingestor._get_embeddings(test_text)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1c39c5aeec0 state=finished raised AttributeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+2025-06-29 23:59:43,066 - ERROR -   - test_04_get_embeddings_error_handling (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 24, in _get_embeddings
+    raise ValueError("Input text cannot be an empty string.")
+ValueError: Input text cannot be an empty string.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 218, in test_04_get_embeddings_error_handling
+    self.ingestor._get_embeddings("")
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1c39c5ace50 state=finished raised ValueError>]
+
+2025-06-29 23:59:43,075 - ERROR -   - test_08_missing_sha1_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 50, in _get_embeddings
+    if 'output' in resp and 'embeddings' in resp['output']:
+TypeError: argument of type 'NoneType' is not iterable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 345, in test_08_missing_sha1_error
+    self.ingestor.process_reports(self.test_reports_dir, self.test_output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 80, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 96, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1c39c5aece0 state=finished raised TypeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+Stderr:
+Processing reports for FAISS:   0%|          | 0/3 [00:00<?, ?it/s]Processing reports for FAISS:   0%|          | 0/3 [00:21<?, ?it/s]
+
+2025-06-29 23:59:43,077 - ERROR -   - test_09_text_truncation (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 65, in _get_embeddings
+    embeddings.append(resp.output.embedding)
+AttributeError: 'dict' object has no attribute 'output'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 381, in test_09_text_truncation
+    index = self.ingestor._process_report(test_report)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 96, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1c39c672560 state=finished raised AttributeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+2025-06-30 00:06:39,265 - INFO - 开始运行 VectorDBIngestor 测试套件
+2025-06-30 00:06:39,265 - INFO - VectorDBIngestor 测试环境初始化完成
+2025-06-30 00:06:39,265 - INFO - === 测试基础初始化 ===
+2025-06-30 00:06:39,265 - INFO - ✓ 默认初始化成功
+2025-06-30 00:06:39,265 - INFO - ✓ API Key 设置成功
+2025-06-30 00:06:39,265 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:06:39,266 - INFO - === 测试单个文本嵌入向量获取 ===
+2025-06-30 00:06:39,266 - INFO - ✓ 单个文本嵌入向量获取成功，维度: 1535
+2025-06-30 00:06:39,266 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:06:39,266 - INFO - === 测试批量文本嵌入向量获取 ===
+2025-06-30 00:06:39,267 - INFO - ✓ 批量文本嵌入向量获取成功，数量: 3
+2025-06-30 00:06:39,267 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:06:39,267 - INFO - === 测试嵌入向量获取错误处理 ===
+2025-06-30 00:06:59,271 - INFO - 测试耗时: 20.00秒
+2025-06-30 00:06:59,272 - INFO - === 测试向量库构建 ===
+2025-06-30 00:06:59,273 - INFO - ✓ 向量库构建成功，向量数量: 3，维度: 5
+2025-06-30 00:06:59,273 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:06:59,273 - INFO - === 测试单个报告处理 ===
+2025-06-30 00:06:59,274 - INFO - ✓ 单个报告处理成功，生成向量数量: 3
+2025-06-30 00:06:59,274 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:06:59,274 - INFO - === 测试批量报告处理 ===
+2025-06-30 00:06:59,275 - INFO - 创建了 2 个测试报告文件
+2025-06-30 00:06:59,280 - INFO - 测试耗时: 0.01秒
+2025-06-30 00:06:59,281 - INFO - === 测试缺少sha1字段错误处理 ===
+2025-06-30 00:07:20,216 - INFO - 测试耗时: 20.93秒
+2025-06-30 00:07:20,219 - INFO - === 测试文本截断功能 ===
+2025-06-30 00:07:20,220 - INFO - ✓ 文本截断功能正常，截断后长度: 2048
+2025-06-30 00:07:20,221 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:07:20,222 - INFO - === 测试性能基准 ===
+2025-06-30 00:07:20,223 - INFO - ✓ 大批量文本处理完成，耗时: 0.000秒，文本数量: 100
+2025-06-30 00:07:20,224 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:07:20,233 - INFO - 
+==================================================
+2025-06-30 00:07:20,233 - INFO - 测试结果摘要:
+2025-06-30 00:07:20,233 - INFO - 总测试数: 10
+2025-06-30 00:07:20,234 - INFO - 成功: 7
+2025-06-30 00:07:20,234 - INFO - 失败: 0
+2025-06-30 00:07:20,234 - INFO - 错误: 3
+2025-06-30 00:07:20,234 - ERROR - 错误的测试:
+2025-06-30 00:07:20,234 - ERROR -   - test_04_get_embeddings_error_handling (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 24, in _get_embeddings
+    raise ValueError("Input text cannot be an empty string.")
+ValueError: Input text cannot be an empty string.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 218, in test_04_get_embeddings_error_handling
+    self.ingestor._get_embeddings("")
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x17f9ae44c40 state=finished raised ValueError>]
+
+2025-06-30 00:07:20,235 - ERROR -   - test_07_process_batch_reports (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 314, in test_07_process_batch_reports
+    self.ingestor.process_reports(self.test_reports_dir, output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 90, in process_reports
+    raise ValueError(f"分块报告 {report_path} 缺少 sha1 字段，无法保存 faiss 文件！")
+ValueError: 分块报告 ..\debug_data\test_output\test_reports\invalid_report.json 缺少 sha1 字段，无法保存 faiss 文件！
+
+Stdout:
+start embedding ================================
+11111111
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]
+
+2025-06-30 00:07:20,235 - ERROR -   - test_08_missing_sha1_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 55, in _get_embeddings
+    if 'output' in resp and 'embeddings' in resp['output']:
+TypeError: argument of type 'NoneType' is not iterable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 345, in test_08_missing_sha1_error
+    self.ingestor.process_reports(self.test_reports_dir, self.test_output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 86, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 102, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x17f9ae469b0 state=finished raised TypeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/3 [00:20<?, ?it/s]
+
+2025-06-30 00:13:54,491 - INFO - 开始运行 VectorDBIngestor 测试套件
+2025-06-30 00:13:54,492 - INFO - VectorDBIngestor 测试环境初始化完成
+2025-06-30 00:13:54,492 - INFO - === 测试基础初始化 ===
+2025-06-30 00:13:54,492 - INFO - ✓ 默认初始化成功
+2025-06-30 00:13:54,492 - INFO - ✓ API Key 设置成功
+2025-06-30 00:13:54,492 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:13:54,493 - INFO - === 测试单个文本嵌入向量获取 ===
+2025-06-30 00:13:54,493 - INFO - ✓ 单个文本嵌入向量获取成功，维度: 1535
+2025-06-30 00:13:54,493 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:13:54,493 - INFO - === 测试批量文本嵌入向量获取 ===
+2025-06-30 00:13:54,494 - INFO - ✓ 批量文本嵌入向量获取成功，数量: 3
+2025-06-30 00:13:54,494 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:13:54,494 - INFO - === 测试嵌入向量获取错误处理 ===
+2025-06-30 00:14:14,503 - INFO - ✓ 空字符串错误处理正常
+2025-06-30 00:14:34,504 - INFO - ✓ 空列表错误处理正常
+2025-06-30 00:14:54,510 - INFO - ✓ 非字符串类型错误处理正常
+2025-06-30 00:14:54,510 - INFO - 测试耗时: 60.02秒
+2025-06-30 00:14:54,510 - INFO - === 测试向量库构建 ===
+2025-06-30 00:14:54,510 - INFO - ✓ 向量库构建成功，向量数量: 3，维度: 5
+2025-06-30 00:14:54,510 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:14:54,510 - INFO - === 测试单个报告处理 ===
+2025-06-30 00:14:54,511 - INFO - ✓ 单个报告处理成功，生成向量数量: 3
+2025-06-30 00:14:54,511 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:14:54,511 - INFO - === 测试批量报告处理 ===
+2025-06-30 00:14:54,512 - INFO - 创建了 2 个测试报告文件
+2025-06-30 00:14:54,518 - INFO - 测试耗时: 0.01秒
+2025-06-30 00:14:54,518 - INFO - === 测试缺少sha1字段错误处理 ===
+2025-06-30 00:15:16,230 - INFO - 测试耗时: 21.71秒
+2025-06-30 00:15:16,231 - INFO - === 测试文本截断功能 ===
+2025-06-30 00:15:16,232 - INFO - ✓ 文本截断功能正常，截断后长度: 2048
+2025-06-30 00:15:16,232 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:15:16,232 - INFO - === 测试性能基准 ===
+2025-06-30 00:15:16,233 - INFO - ✓ 大批量文本处理完成，耗时: 0.001秒，文本数量: 100
+2025-06-30 00:15:16,233 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:15:16,234 - INFO - 
+==================================================
+2025-06-30 00:15:16,234 - INFO - 测试结果摘要:
+2025-06-30 00:15:16,234 - INFO - 总测试数: 10
+2025-06-30 00:15:16,234 - INFO - 成功: 8
+2025-06-30 00:15:16,234 - INFO - 失败: 0
+2025-06-30 00:15:16,234 - INFO - 错误: 2
+2025-06-30 00:15:16,234 - ERROR - 错误的测试:
+2025-06-30 00:15:16,234 - ERROR -   - test_07_process_batch_reports (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 317, in test_07_process_batch_reports
+    self.ingestor.process_reports(self.test_reports_dir, output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 90, in process_reports
+    raise ValueError(f"分块报告 {report_path} 缺少 sha1 字段，无法保存 faiss 文件！")
+ValueError: 分块报告 ..\debug_data\test_output\test_reports\invalid_report.json 缺少 sha1 字段，无法保存 faiss 文件！
+
+Stdout:
+start embedding ================================
+11111111
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]
+
+2025-06-30 00:15:16,234 - ERROR -   - test_08_missing_sha1_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 55, in _get_embeddings
+    if 'output' in resp and 'embeddings' in resp['output']:
+TypeError: argument of type 'NoneType' is not iterable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 348, in test_08_missing_sha1_error
+    self.ingestor.process_reports(self.test_reports_dir, self.test_output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 86, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 102, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1f69eb97370 state=finished raised TypeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/3 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/3 [00:21<?, ?it/s]
+
+2025-06-30 00:39:19,322 - INFO - 开始运行 VectorDBIngestor 测试套件
+2025-06-30 00:39:19,323 - INFO - VectorDBIngestor 测试环境初始化完成
+2025-06-30 00:39:19,323 - INFO - === 测试基础初始化 ===
+2025-06-30 00:39:19,323 - INFO - ✓ 默认初始化成功
+2025-06-30 00:39:19,324 - INFO - ✓ API Key 设置成功
+2025-06-30 00:39:19,324 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:39:19,324 - INFO - === 测试单个文本嵌入向量获取 ===
+2025-06-30 00:39:19,324 - INFO - ✓ 单个文本嵌入向量获取成功，维度: 1535
+2025-06-30 00:39:19,324 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:39:19,325 - INFO - === 测试批量文本嵌入向量获取 ===
+2025-06-30 00:39:19,325 - INFO - ✓ 批量文本嵌入向量获取成功，数量: 3
+2025-06-30 00:39:19,325 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:39:19,325 - INFO - === 测试嵌入向量获取错误处理 ===
+2025-06-30 00:39:39,326 - INFO - ✓ 空字符串错误处理正常
+2025-06-30 00:39:59,331 - INFO - ✓ 空列表错误处理正常
+2025-06-30 00:40:19,345 - INFO - ✓ 非字符串类型错误处理正常
+2025-06-30 00:40:19,345 - INFO - 测试耗时: 60.02秒
+2025-06-30 00:40:19,345 - INFO - === 测试向量库构建 ===
+2025-06-30 00:40:19,345 - INFO - ✓ 向量库构建成功，向量数量: 3，维度: 5
+2025-06-30 00:40:19,345 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:40:19,347 - INFO - === 测试单个报告处理 ===
+2025-06-30 00:40:19,347 - INFO - ✓ 单个报告处理成功，生成向量数量: 3
+2025-06-30 00:40:19,347 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:40:19,347 - INFO - === 测试批量报告处理 ===
+2025-06-30 00:40:19,347 - INFO - 清理无效测试文件: ..\debug_data\test_output\test_reports\invalid_report.json
+2025-06-30 00:40:19,349 - INFO - 创建了 2 个测试报告文件
+2025-06-30 00:40:39,362 - INFO - 测试耗时: 20.01秒
+2025-06-30 00:40:39,364 - INFO - === 测试缺少sha1字段错误处理 ===
+2025-06-30 00:41:01,334 - INFO - 测试耗时: 21.97秒
+2025-06-30 00:41:01,337 - INFO - === 测试文本截断功能 ===
+2025-06-30 00:41:01,338 - INFO - ✓ 文本截断功能正常，截断后长度: 2048
+2025-06-30 00:41:01,338 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:41:01,339 - INFO - === 测试性能基准 ===
+2025-06-30 00:41:01,340 - INFO - ✓ 大批量文本处理完成，耗时: 0.001秒，文本数量: 100
+2025-06-30 00:41:01,340 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:41:01,342 - INFO - === 测试API返回None错误处理 ===
+2025-06-30 00:41:21,357 - INFO - 测试耗时: 20.02秒
+2025-06-30 00:41:21,374 - INFO - 
+==================================================
+2025-06-30 00:41:21,375 - INFO - 测试结果摘要:
+2025-06-30 00:41:21,375 - INFO - 总测试数: 11
+2025-06-30 00:41:21,378 - INFO - 成功: 8
+2025-06-30 00:41:21,379 - INFO - 失败: 1
+2025-06-30 00:41:21,380 - INFO - 错误: 2
+2025-06-30 00:41:21,381 - ERROR - 失败的测试:
+2025-06-30 00:41:21,381 - ERROR -   - test_11_api_returns_none_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 462, in test_11_api_returns_none_error
+    self.assertIn("TypeError", str(context.exception))
+AssertionError: 'TypeError' not found in 'RetryError[<Future at 0x19ba0e648b0 state=finished raised RuntimeError>]'
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+2025-06-30 00:41:21,383 - ERROR - 错误的测试:
+2025-06-30 00:41:21,384 - ERROR -   - test_07_process_batch_reports (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 74, in _get_embeddings
+    raise RuntimeError(f"DashScope embedding API返回格式异常: {resp}")
+RuntimeError: DashScope embedding API返回格式异常: <MagicMock name='call()' id='1767930772448'>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 339, in test_07_process_batch_reports
+    self.ingestor.process_reports(self.test_reports_dir, output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 86, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 102, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x19ba0e6dc00 state=finished raised RuntimeError>]
+
+Stdout:
+start embedding ================================
+33333333
+start embedding ================================
+33333333
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/2 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/2 [00:20<?, ?it/s]
+
+2025-06-30 00:41:21,387 - ERROR -   - test_08_missing_sha1_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 55, in _get_embeddings
+    if 'output' in resp and 'embeddings' in resp['output']:
+TypeError: argument of type 'NoneType' is not iterable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 375, in test_08_missing_sha1_error
+    self.ingestor.process_reports(self.test_reports_dir, self.test_output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 86, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 102, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x19ba0e676a0 state=finished raised TypeError>]
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/1 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/1 [00:21<?, ?it/s]
+
+2025-06-30 00:45:27,290 - INFO - 开始运行 VectorDBIngestor 测试套件
+2025-06-30 00:45:27,290 - INFO - VectorDBIngestor 测试环境初始化完成
+2025-06-30 00:45:27,290 - INFO - === 测试基础初始化 ===
+2025-06-30 00:45:27,290 - INFO - ✓ 默认初始化成功
+2025-06-30 00:45:27,290 - INFO - ✓ API Key 设置成功
+2025-06-30 00:45:27,290 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:45:27,291 - INFO - === 测试单个文本嵌入向量获取 ===
+2025-06-30 00:45:27,291 - INFO - ✓ 单个文本嵌入向量获取成功，维度: 1535
+2025-06-30 00:45:27,291 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:45:27,291 - INFO - === 测试批量文本嵌入向量获取 ===
+2025-06-30 00:45:27,291 - INFO - ✓ 批量文本嵌入向量获取成功，数量: 3
+2025-06-30 00:45:27,291 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:45:27,292 - INFO - === 测试嵌入向量获取错误处理 ===
+2025-06-30 00:45:47,303 - INFO - ✓ 空字符串错误处理正常
+2025-06-30 00:46:07,317 - INFO - ✓ 空列表错误处理正常
+2025-06-30 00:46:27,330 - INFO - ✓ 非字符串类型错误处理正常
+2025-06-30 00:46:27,332 - INFO - 测试耗时: 60.04秒
+2025-06-30 00:46:27,334 - INFO - === 测试向量库构建 ===
+2025-06-30 00:46:27,335 - INFO - ✓ 向量库构建成功，向量数量: 3，维度: 5
+2025-06-30 00:46:27,335 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:46:27,339 - INFO - === 测试单个报告处理 ===
+2025-06-30 00:46:27,341 - INFO - ✓ 单个报告处理成功，生成向量数量: 3
+2025-06-30 00:46:27,342 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:46:27,349 - INFO - === 测试批量报告处理 ===
+2025-06-30 00:46:27,351 - INFO - 清理无效测试文件: ..\debug_data\test_output\test_reports\invalid_report.json
+2025-06-30 00:46:27,354 - INFO - 创建了 2 个测试报告文件
+2025-06-30 00:46:47,377 - INFO - 测试耗时: 20.03秒
+2025-06-30 00:46:47,383 - INFO - === 测试缺少sha1字段错误处理 ===
+2025-06-30 00:46:47,384 - INFO - ✓ API返回None错误处理正常
+2025-06-30 00:46:47,384 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:46:47,388 - INFO - === 测试文本截断功能 ===
+2025-06-30 00:46:47,389 - INFO - ✓ 文本截断功能正常，截断后长度: 2048
+2025-06-30 00:46:47,390 - INFO - 测试耗时: 0.00秒
+2025-06-30 00:46:47,397 - INFO - === 测试性能基准 ===
+2025-06-30 00:46:47,399 - INFO - ✓ 大批量文本处理完成，耗时: 0.001秒，文本数量: 100
+2025-06-30 00:46:47,400 - INFO - 测试耗时: 0.01秒
+2025-06-30 00:46:47,401 - INFO - === 测试API返回None错误处理 ===
+2025-06-30 00:47:07,409 - INFO - 测试耗时: 20.01秒
+2025-06-30 00:47:07,411 - INFO - 
+==================================================
+2025-06-30 00:47:07,412 - INFO - 测试结果摘要:
+2025-06-30 00:47:07,412 - INFO - 总测试数: 11
+2025-06-30 00:47:07,412 - INFO - 成功: 8
+2025-06-30 00:47:07,412 - INFO - 失败: 1
+2025-06-30 00:47:07,412 - INFO - 错误: 2
+2025-06-30 00:47:07,412 - ERROR - 失败的测试:
+2025-06-30 00:47:07,412 - ERROR -   - test_11_api_returns_none_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 471, in test_11_api_returns_none_error
+    self.assertIn("TypeError", str(context.exception))
+AssertionError: 'TypeError' not found in 'RetryError[<Future at 0x1e91fccca60 state=finished raised RuntimeError>]'
+
+Stdout:
+start embedding ================================
+start embedding ================================
+
+2025-06-30 00:47:07,412 - ERROR - 错误的测试:
+2025-06-30 00:47:07,412 - ERROR -   - test_07_process_batch_reports (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 74, in _get_embeddings
+    raise RuntimeError(f"DashScope embedding API返回格式异常: {resp}")
+RuntimeError: DashScope embedding API返回格式异常: <MagicMock name='call()' id='2100772249632'>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 339, in test_07_process_batch_reports
+    self.ingestor.process_reports(self.test_reports_dir, output_dir)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 86, in process_reports
+    index = self._process_report(report_data)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\src\ingestion.py", line 102, in _process_report
+    embeddings = self._get_embeddings(text_chunks)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "E:\code\AIProjectCode\trae_code\.venv\lib\site-packages\tenacity\__init__.py", line 421, in exc_check
+    raise retry_exc from fut.exception()
+tenacity.RetryError: RetryError[<Future at 0x1e91fccc040 state=finished raised RuntimeError>]
+
+Stdout:
+start embedding ================================
+33333333
+start embedding ================================
+33333333
+
+Stderr:
+Processing reports for FAISS:   0%|                                                              | 0/2 [00:00<?, ?it/s]Processing reports for FAISS:   0%|                                                              | 0/2 [00:20<?, ?it/s]
+
+2025-06-30 00:47:07,413 - ERROR -   - test_08_missing_sha1_error (__main__.TestVectorDBIngestor): Traceback (most recent call last):
+  File "D:\python3106\lib\unittest\mock.py", line 1369, in patched
+    return func(*newargs, **newkeywargs)
+  File "E:\code\AIProjectCode\trae_code\project\企业知识库\tests\test_ingestion.py", line 391, in test_08_missing_sha1_error
+    if invalid_file.exists():
+NameError: name 'invalid_file' is not defined
+

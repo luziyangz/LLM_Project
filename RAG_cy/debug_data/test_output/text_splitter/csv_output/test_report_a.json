@@ -1,0 +1,25 @@
+{
+  "metainfo": {
+    "sha1": "abc123def456",
+    "company_name": "测试公司A",
+    "file_name": "test_report_a.md"
+  },
+  "content": {
+    "chunks": [
+      {
+        "lines": [
+          1,
+          15
+        ],
+        "text": "# 测试报告 A\n\n## 概述\n这是一个测试用的 Markdown 文件。\n包含多行内容用于测试分块功能。\n\n## 详细信息\n- 项目名称：测试项目A\n- 状态：进行中\n- 负责人：张三\n\n### 技术栈\n1. Python\n2. FastAPI\n3. PostgreSQL\n"
+      },
+      {
+        "lines": [
+          13,
+          18
+        ],
+        "text": "1. Python\n2. FastAPI\n3. PostgreSQL\n\n## 结论\n测试文件创建成功。\n"
+      }
+    ]
+  }
+}

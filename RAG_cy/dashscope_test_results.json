@@ -1,0 +1,73 @@
+{
+  "test_time": "2025-06-26 13:45:24",
+  "results": [
+    {
+      "model": "qwen-turbo",
+      "type": "chat",
+      "status": "success",
+      "response_time": 1.39,
+      "error": null,
+      "response": "你好！我是一个大型语言模型，可以回答问题、创作文字、进行推理和编程等。我的目标是为用户提供帮助和便利。有什么我可以帮你的吗？",
+      "usage": {
+        "prompt_tokens": 18,
+        "completion_tokens": 36,
+        "total_tokens": 54
+      }
+    },
+    {
+      "model": "qwen-plus",
+      "type": "chat",
+      "status": "success",
+      "response_time": 6.03,
+      "error": null,
+      "response": "你好！我是Qwen3，是阿里巴巴最新推出的通义千问大语言模型。我基于更全面的知识语料，拥有更丰富的语言理解和表达能力。相比之前的版本，我在多个方面都有显著提升：\n\n1. **更强更全的基座模型**：基于更全面的知识语料，我拥有更丰富的语言理解和表达能力，包含多个dense和MoE版本，以满足不同场景的需求。\n\n2. **丰富的推理模式选择**：我支持多种",
+      "usage": {
+        "prompt_tokens": 18,
+        "completion_tokens": 100,
+        "total_tokens": 118
+      }
+    },
+    {
+      "model": "qwen-max",
+      "type": "chat",
+      "status": "success",
+      "response_time": 7.77,
+      "error": null,
+      "response": "你好！我是Qwen，由阿里云研发的预训练语言模型。我被设计用来帮助用户生成各种类型的文本，如文章、故事、诗歌、故事等，并能够根据给定的上下文进行对话交流。无论是提供信息查询、解答问题还是参与创造性的头脑风暴，我都乐于助人。我的目标是成为一个对所有人都有帮助的多才多艺的语言助手。有什么我可以帮到你的吗？",
+      "usage": {
+        "prompt_tokens": 14,
+        "completion_tokens": 91,
+        "total_tokens": 105
+      }
+    },
+    {
+      "model": "qwen-long",
+      "type": "chat",
+      "status": "success",
+      "response_time": 2.68,
+      "error": null,
+      "response": "你好！我是Qwen，是阿里巴巴集团旗下的通义实验室自主研发的超大规模语言模型。我可以帮助你回答问题、创作文字，比如写故事、写公文、写邮件、写剧本、逻辑推理、编程等等，还能表达观点，玩游戏等。如果你有任何问题或需要帮助，欢迎随时告诉我！",
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 67,
+        "total_tokens": 73
+      }
+    },
+    {
+      "model": "text-embedding-v1",
+      "type": "embedding",
+      "status": "success",
+      "response_time": 0.21,
+      "error": null,
+      "embedding_dim": 1536
+    },
+    {
+      "model": "text-embedding-v2",
+      "type": "embedding",
+      "status": "success",
+      "response_time": 0.15,
+      "error": null,
+      "embedding_dim": 1536
+    }
+  ]
+}

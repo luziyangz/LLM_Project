@@ -1,0 +1,21 @@
+{
+  "metainfo": {
+    "sha1": "test_hash_002",
+    "company_name": "中芯国际",
+    "file_name": "smic_report.json"
+  },
+  "content": {
+    "chunks": [
+      {
+        "id": 0,
+        "type": "content",
+        "text": "中芯国际是中国大陆规模最大的集成电路晶圆代工企业。"
+      },
+      {
+        "id": 1,
+        "type": "content",
+        "text": "公司提供0.35微米到14纳米不同技术节点的晶圆代工与技术服务。"
+      }
+    ]
+  }
+}

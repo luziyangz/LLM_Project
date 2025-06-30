@@ -1,0 +1,82 @@
+{
+  "questions": [
+    {
+      "question_text": "中芯国际在晶圆制造行业中的地位如何？其服务范围和全球布局是怎样的？",
+      "kind": "string",
+      "value": null,
+      "references": [],
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'",
+      "answer_details": {
+        "$ref": "#/answer_details/0"
+      }
+    },
+    {
+      "question_text": "半导体行业有哪些关键特性，这些特性如何助力中芯国际发展？",
+      "kind": "string",
+      "value": null,
+      "references": [],
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'",
+      "answer_details": {
+        "$ref": "#/answer_details/1"
+      }
+    },
+    {
+      "question_text": "中芯国际的营收和利润情况近期有何变化？影响因素是什么？",
+      "kind": "string",
+      "value": null,
+      "references": [],
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'",
+      "answer_details": {
+        "$ref": "#/answer_details/2"
+      }
+    },
+    {
+      "question_text": "中芯国际的收入结构有何变化？尤其是在中国大陆和北美市场的表现如何？",
+      "kind": "string",
+      "value": null,
+      "references": [],
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'",
+      "answer_details": {
+        "$ref": "#/answer_details/3"
+      }
+    },
+    {
+      "question_text": "美国对中国半导体产业的限制政策对中芯国际有何影响？中芯国际如何应对？",
+      "kind": "string",
+      "value": null,
+      "references": [],
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'",
+      "answer_details": {
+        "$ref": "#/answer_details/4"
+      }
+    }
+  ],
+  "answer_details": [
+    {
+      "error_traceback": "Traceback (most recent call last):\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 217, in _process_single_question\n    answer_dict = self.process_question(question_text, schema)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 265, in process_question\n    extracted_companies = self._extract_companies_from_subset(question)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 339, in _extract_companies_from_subset\n    self.companies_df = pd.read_csv(self.subset_path, encoding='utf-8')\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1026, in read_csv\n    return _read(filepath_or_buffer, kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 620, in _read\n    parser = TextFileReader(filepath_or_buffer, **kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1620, in __init__\n    self._engine = self._make_engine(f, self.engine)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1880, in _make_engine\n    self.handles = get_handle(\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'\n",
+      "self": "#/answer_details/0"
+    },
+    {
+      "error_traceback": "Traceback (most recent call last):\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 217, in _process_single_question\n    answer_dict = self.process_question(question_text, schema)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 265, in process_question\n    extracted_companies = self._extract_companies_from_subset(question)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 339, in _extract_companies_from_subset\n    self.companies_df = pd.read_csv(self.subset_path, encoding='utf-8')\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1026, in read_csv\n    return _read(filepath_or_buffer, kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 620, in _read\n    parser = TextFileReader(filepath_or_buffer, **kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1620, in __init__\n    self._engine = self._make_engine(f, self.engine)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1880, in _make_engine\n    self.handles = get_handle(\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'\n",
+      "self": "#/answer_details/1"
+    },
+    {
+      "error_traceback": "Traceback (most recent call last):\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 217, in _process_single_question\n    answer_dict = self.process_question(question_text, schema)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 265, in process_question\n    extracted_companies = self._extract_companies_from_subset(question)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 339, in _extract_companies_from_subset\n    self.companies_df = pd.read_csv(self.subset_path, encoding='utf-8')\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1026, in read_csv\n    return _read(filepath_or_buffer, kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 620, in _read\n    parser = TextFileReader(filepath_or_buffer, **kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1620, in __init__\n    self._engine = self._make_engine(f, self.engine)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1880, in _make_engine\n    self.handles = get_handle(\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'\n",
+      "self": "#/answer_details/2"
+    },
+    {
+      "error_traceback": "Traceback (most recent call last):\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 217, in _process_single_question\n    answer_dict = self.process_question(question_text, schema)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 265, in process_question\n    extracted_companies = self._extract_companies_from_subset(question)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 339, in _extract_companies_from_subset\n    self.companies_df = pd.read_csv(self.subset_path, encoding='utf-8')\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1026, in read_csv\n    return _read(filepath_or_buffer, kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 620, in _read\n    parser = TextFileReader(filepath_or_buffer, **kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1620, in __init__\n    self._engine = self._make_engine(f, self.engine)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1880, in _make_engine\n    self.handles = get_handle(\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'\n",
+      "self": "#/answer_details/3"
+    },
+    {
+      "error_traceback": "Traceback (most recent call last):\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 217, in _process_single_question\n    answer_dict = self.process_question(question_text, schema)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 265, in process_question\n    extracted_companies = self._extract_companies_from_subset(question)\n  File \"E:\\code\\AIProjectCode\\trae_code\\project\\企业知识库\\src\\questions_processing.py\", line 339, in _extract_companies_from_subset\n    self.companies_df = pd.read_csv(self.subset_path, encoding='utf-8')\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1026, in read_csv\n    return _read(filepath_or_buffer, kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 620, in _read\n    parser = TextFileReader(filepath_or_buffer, **kwds)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1620, in __init__\n    self._engine = self._make_engine(f, self.engine)\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\parsers\\readers.py\", line 1880, in _make_engine\n    self.handles = get_handle(\n  File \"E:\\code\\AIProjectCode\\trae_code\\.venv\\lib\\site-packages\\pandas\\io\\common.py\", line 882, in get_handle\n    handle = open(handle, ioargs.mode)\nFileNotFoundError: [Errno 2] No such file or directory: 'E:\\\\code\\\\AIProjectCode\\\\trae_code\\\\project\\\\企业知识库\\\\data\\\\subset.csv'\n",
+      "self": "#/answer_details/4"
+    }
+  ],
+  "statistics": {
+    "total_questions": 5,
+    "error_count": 5,
+    "na_count": 0,
+    "success_count": 0
+  }
+}

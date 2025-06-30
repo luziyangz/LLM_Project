@@ -1,0 +1,5 @@
+sha1,company_name,file_name
+abc123def456,"测试公司A",test_report_a.md
+789xyz012uvw,"测试公司B",test_report_b.md
+test_hash_smic,"中芯国际",smic_research_report.md
+test_hash_002,"上海证券",shanghai_securities_report.md
